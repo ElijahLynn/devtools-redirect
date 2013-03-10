@@ -1,0 +1,9 @@
+<% $.each( resources, function( i, resource ) { %>
+  <li>
+    <input class="resourceEnabled" type="checkbox" <% if(resource.attr('enabled')) { %> checked="checked"<% } %> />
+    <input class="resourceURL span5" type="text" placeholder="Resource URL" value="<%= resource.attr('resourceURL') %>" />
+    <span class="icon-chevron-right"></span>
+    <input class="resourceRedirectURL span5" type="text" placeholder="Resource Redirect URL" value="<%= resource.attr('resourceRedirectURL') %>" />
+    <a class="btn btn-delete"><i class="icon-minus-sign"></i></a>
+  </li>
+<% }); %>

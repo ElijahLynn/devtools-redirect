@@ -1,0 +1,29 @@
+{
+    "name": "Boris",
+    "version": "0.2",
+    "manifest_version": 2,
+    "description": "Catch and redirect resources loaded from a specific domain / path.",
+    "browser_action": {
+        "default_icon": "img/icon-32x32.png",
+        "default_popup": "popup.html"
+    },
+    
+    "background": {"page": "background.html"},
+    
+    //"options_page": "options.html",
+    
+    "devtools_page": "devtools.html",
+    
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    
+    "permissions": [
+      "storage",
+      "background",
+      "tabs",
+      "webRequest",
+      "webRequestBlocking",
+      "http://*/*",
+      "https://*/*"
+    ]
+    
+}
