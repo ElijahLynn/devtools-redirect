@@ -10,4 +10,9 @@ Installation
 3. Select *boris/* folder.
 4. Congratz!
 
+Demo
+---------------------
+http://screenr.com/ebt7
+
+
 
