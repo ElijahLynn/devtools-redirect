@@ -8,7 +8,6 @@ Installation
 1. To install the dev version, download or clone this repo.
 2. Navigate to **chrome://extensions** , then click on **Load unpacked extension...**
 3. Select **boris/** folder.
-4. Congratz!
 
 Demo
 ---------------------
