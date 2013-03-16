@@ -7,12 +7,12 @@
       "128": "img/icon-32x32.png"
     },
     
-    /*
+    
     "browser_action": {
       "default_popup": "popup.html",
-      "default_icon": "img/icon-32x32.png"
+      "default_icon": "img/browser-icon-inactive.png"
     },
-    */
+    
     
     "background": {"page": "background.html"},
     

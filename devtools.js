@@ -21,6 +21,11 @@
         } else {
             data.push(msg);
         }
+        
+        if(msg.callback == 'tab') {
+          inspectedTabDefer.resolve(msg.tab);
+        }
+        
     });
     
     panel.onShown.addListener(function tmp(panelWindow) {
@@ -28,13 +33,12 @@
 
       // Release queued data
       var msg;
-      while (msg = data.shift()) { _window.do_something(msg); }
+      while (msg = data.shift()) { _window.catchMessage(msg); }
           
       // Just to show that it's easy to talk to pass a message back:
       _window.respond = function(msg) {
           port.postMessage(msg);
       };
-      console.info(_window);
   	
   	  //panel.onShown.removeListener(tmp); // Run once only
   	  
@@ -63,6 +67,9 @@
       });
       
     });
+    
+    var tabID = chrome.devtools.inspectedWindow.tabId;
+    if(tabID) port.postMessage({action: 'bindBadgeUpdateEvent', tabId: tabID});
     
   });
     
