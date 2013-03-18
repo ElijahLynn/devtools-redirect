@@ -4,7 +4,6 @@
   var redirectRoot = "http://localhost/trsrc-MAINLINE/site/";
   var listeners = [];
   var resourcesRedirected = {};
-  window.resourcesRedirected = resourcesRedirected;
   
   var opts = {};
   var refreshOptions = function() {
@@ -24,7 +23,6 @@
   };
   
   var setBrowserIcon = function(state, tabId) {
-    console.info('set icon : '+state);
     var imgSrc = 'img/browser-icon-inactive.png';
     if(state == 'active') {
       imgSrc = 'img/browser-icon-active.png';
@@ -64,9 +62,7 @@
   
   //Communication,
   var ports = {};
-  window.ports = ports; // REMOVE
   chrome.extension.onConnect.addListener(function(port) {
-    console.info('port : '+port.name);
       if(port.name !== "devtools" && port.name !== "popup") return;
       ports[port.portId_] = port;
       
@@ -76,15 +72,18 @@
       });
       
       port.onMessage.addListener(function(msg) {
+        console.info(msg);
           // Whatever you wish
-          console.log(msg);
           if(msg && msg.action) {
             switch(msg.action) {
               case 'refreshOptions':
                 refreshOptions();
               break;
-              case 'bindBadgeUpdateEvent':
-                bindBadgeUpdateEvent(msg.tabId);
+              case 'enableTab':
+                enableTab(msg.tabId);
+              break;
+              case 'disableTab':
+                disableTab(msg.tabId);
               break;
               case 'getPopupHTML':
                 getPopupHTML(msg.tabId);
@@ -117,7 +116,6 @@
     var newHTML = '';
     if(resourcesRedirected[tabId]) {
       $.each(resourcesRedirected[tabId], function(i, r) {
-        console.info(r);
         newHTML += '<li>"'+r.resourceURL+'" -> "'+r.resourceRedirectURL+'"</li>';
       });
       
@@ -125,30 +123,34 @@
     }
   };
   
-  
-  var bindBadgeUpdateEvent = function(tabId) {
-    
-    //Reset the icon on loading,
-    chrome.tabs.onUpdated.addListener(function(updateTabId, changeInfo, tab) {
-      console.info(tabId+" : "+updateTabId);
-      if(tabId != updateTabId) return false;
-      
-      console.info(changeInfo);
-      if(changeInfo.status == 'loading') {
-        console.info('set icon from devtools');
-        var imgSrc = 'img/browser-icon-inactive.png';
-        chrome.browserAction.setIcon({path: imgSrc, tabId: tabId});
-        resetBadgeCount(tabId);
-        
-        resourcesRedirected[tabId] = [];
-        getPopupHTML(tabId);
-      } else if(changeInfo.status == 'complete') {
-        renderBadgeCount(tabId);
-        //Update popup's content to list active redirects,
-        getPopupHTML(tabId);
-      }
-    });
+  var activeTabs = {};
+  window.activeTabs = activeTabs;
+  var enableTab = function(tabId) {
+    activeTabs[tabId] = true;
   };
+  
+  var disableTab = function(tabId) {
+    delete activeTabs[tabId];
+  };
+  
+  
+  //Reset the icon on loading,
+  chrome.tabs.onUpdated.addListener(function(updateTabId, changeInfo, tab) {
+    if(!activeTabs[updateTabId]) return;
+    
+    if(changeInfo.status == 'loading') {
+      var imgSrc = 'img/browser-icon-inactive.png';
+      chrome.browserAction.setIcon({path: imgSrc, tabId: updateTabId});
+      resetBadgeCount(updateTabId);
+      
+      resourcesRedirected[updateTabId] = [];
+      getPopupHTML(updateTabId);
+    } else if(changeInfo.status == 'complete') {
+      renderBadgeCount(updateTabId);
+      //Update popup's content to list active redirects,
+      getPopupHTML(updateTabId);
+    }
+  });
   
   
   //Get options on init,
@@ -163,29 +165,26 @@
   */
   function generateResourceCatchers(rules) {
     var activeRedirects = [];
-    //console.info(rules);
     $.each(rules, function(i) {
       var rule = this;
-      //console.log(rule.domainURL+' : '+rule.enabled);
       if(!rule.enabled) return; //Make sure the domain is enabled,
       chrome.webRequest.onBeforeRequest.addListener(listeners[listeners.length] = function(details) {
-          for(var i=0;i<rule.resources.length;i++) {
-            //console.info(rule.resources[i].resourceURL+" : "+rule.resources[i].enabled+" && "+details.url.indexOf(rule.resources[i].resourceURL));
-            if(rule.resources[i].enabled && details.url.indexOf(rule.resources[i].resourceURL) != -1) {
-              console.warn(details.url);
-              //console.warn(rule.resources[i].resourceRedirectURL);
-              if(details.tabId) {
-                console.info(details.tabId);
-                badgeCounts[details.tabId] = badgeCounts[details.tabId] + 1;
-                if(typeof resourcesRedirected[details.tabId] == 'undefined') {
-                  resourcesRedirected[details.tabId] = [];
-                }
-                resourcesRedirected[details.tabId].push(rule.resources[i]);
+        //Make sure that the devtools for this tab is active,
+        if(!activeTabs[details.tabId]) return;
+        
+        for(var i=0;i<rule.resources.length;i++) {
+          if(rule.resources[i].enabled && details.url.indexOf(rule.resources[i].resourceURL) != -1) {
+            if(details.tabId) {
+              badgeCounts[details.tabId] = badgeCounts[details.tabId] + 1;
+              if(typeof resourcesRedirected[details.tabId] == 'undefined') {
+                resourcesRedirected[details.tabId] = [];
               }
-              
-              return {redirectUrl: rule.resources[i].resourceRedirectURL};
+              resourcesRedirected[details.tabId].push(rule.resources[i]);
             }
+            
+            return {redirectUrl: rule.resources[i].resourceRedirectURL};
           }
+        }
           
         },
         {

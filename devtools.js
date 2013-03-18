@@ -6,27 +6,27 @@
     opts = storeOptions;
   });
   
+  var data = [];
+  var port = chrome.extension.connect({name:"devtools"});
+  port.onMessage.addListener(function(msg) {
+      // Write information to the panel, if exists.
+      // If we don't have a panel reference (yet), queue the data.
+      if (_window) {
+          _window.do_something(msg);
+      } else {
+          data.push(msg);
+      }
+      
+      if(msg.callback == 'tab') {
+        inspectedTabDefer.resolve(msg.tab);
+      }
+      
+  });
+  
   chrome.devtools.panels.create("Boris", "img/icon-32x32.png", "panel/panel.html", function(panel) {
     var _window; // Going to hold the reference to panel.html's `window`
     var newResource = null;
     var currentTab = null;
-    
-    var data = [];
-    var port = chrome.extension.connect({name:"devtools"});
-    port.onMessage.addListener(function(msg) {
-        // Write information to the panel, if exists.
-        // If we don't have a panel reference (yet), queue the data.
-        if (_window) {
-            _window.do_something(msg);
-        } else {
-            data.push(msg);
-        }
-        
-        if(msg.callback == 'tab') {
-          inspectedTabDefer.resolve(msg.tab);
-        }
-        
-    });
     
     panel.onShown.addListener(function tmp(panelWindow) {
       var _window = panelWindow;
@@ -68,10 +68,21 @@
       
     });
     
-    var tabID = chrome.devtools.inspectedWindow.tabId;
-    if(tabID) port.postMessage({action: 'bindBadgeUpdateEvent', tabId: tabID});
-    
   });
+  
+  //When the devtools load, send the tabId to enable resource redirection,
+  var tabID = chrome.devtools.inspectedWindow.tabId;
+  console.info(tabID);
+  if(tabID) {
+    port.postMessage({action: 'enableTab', tabId: tabID});
+    
+    console.info(tabID);
+    console.info(window);
+    window.onbeforeunload = function(event) {
+      port.postMessage({action: 'disableTab', tabId: tabID});
+      return "Are you sure you want to navigate away?";
+    };
+  }
     
 })();
 

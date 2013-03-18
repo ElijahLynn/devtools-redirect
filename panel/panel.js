@@ -206,6 +206,12 @@
   
   window.Panel = new Boris.Panel('#form-rules', {});
   
+  window.onbeforeunload = function(event) {
+    //port.postMessage({action: 'disableTab', tabId: tabID});
+    console.info('test');
+    return "Are you sure you want to navigate away?";
+  };
+  
 })(Arthur, Boris);
 
 
