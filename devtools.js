@@ -23,7 +23,7 @@
       
   });
   
-  chrome.devtools.panels.create("Boris", "img/icon-32x32.png", "panel/panel.html", function(panel) {
+  chrome.devtools.panels.create("Redirect", "img/icon-32x32.png", "panel/panel.html", function(panel) {
     var _window; // Going to hold the reference to panel.html's `window`
     var newResource = null;
     var currentTab = null;
@@ -37,7 +37,7 @@
           
       // Just to show that it's easy to talk to pass a message back:
       _window.respond = function(msg) {
-          port.postMessage(msg);
+        port.postMessage(msg);
       };
   	
   	  //panel.onShown.removeListener(tmp); // Run once only

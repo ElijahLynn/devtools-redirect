@@ -1,5 +1,5 @@
 {
-    "name": "Boris",
+    "name": "Devtools redirect",
     "version": "0.3",
     "manifest_version": 2,
     "description": "Catch and redirect resources loaded from a specific domain / path.",
