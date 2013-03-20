@@ -16,7 +16,7 @@
       listeners.length = 0;
     }
     
-    Boris.getOptions(['rules']).then(function(storeOptions) {
+    DevtoolsRedirect.getOptions(['rules']).then(function(storeOptions) {
       opts = storeOptions;
       if(opts.rules && opts.rules.length) generateResourceCatchers(opts.rules);
     });
@@ -56,23 +56,24 @@
       setBrowserIcon('inactive', tabId);
       chrome.browserAction.setBadgeText({text: '', tabId: tabId});
     }
-    
   };
   
   
   //Communication,
   var ports = {};
   chrome.extension.onConnect.addListener(function(port) {
-      if(port.name !== "devtools" && port.name !== "popup") return;
-      ports[port.portId_] = port;
+      if(port.name != 'devtools' && port.name != 'popup') return;
+      var tabId = port.sender && port.sender.tab.id ? port.sender.tab.id : null;
+      ports[port.portId_] = {port: port, portId: port.portId_, tabId: tabId, name: port.name};
       
       // Remove port when destroyed (eg when devtools instance is closed)
       port.onDisconnect.addListener(function(port) {
-          delete ports[port.portId_];
+        var portObj = ports[port.portId_];
+        if(portObj && port.name == 'devtools' && portObj.tabId) disableTab(portObj.tabId);
+        delete ports[port.portId_];
       });
       
       port.onMessage.addListener(function(msg) {
-        console.info(msg);
           // Whatever you wish
           if(msg && msg.action) {
             switch(msg.action) {
@@ -96,14 +97,14 @@
   // Function to send a message to all devtool.html views:
   function notifyDevtools(msg) {
     Object.keys(ports).forEach(function(portId_) {
-      ports[portId_].postMessage(msg);
+      if(ports[portId_].name == 'devtools') ports[portId_].port.postMessage(msg);
     });
   };
   
   // Function to send a message to a specific popup.html view:
   function notifyPopups(msg) {
     Object.keys(ports).forEach(function(portId_) {
-      ports[portId_].postMessage(msg);
+      if(ports[portId_].name == 'popup') ports[portId_].port.postMessage(msg);
     });
   };
   
@@ -113,16 +114,21 @@
   };
   
   var generatePopupHTML = function(tabId) {
-    var newHTML = '';
     if(resourcesRedirected[tabId]) {
+      var newHTML = '';
       $.each(resourcesRedirected[tabId], function(i, r) {
-        newHTML += '<li>"'+r.resourceURL+'" -> "'+r.resourceRedirectURL+'"</li>';
+        newHTML += '<li><a href="'+r.resourceURL+'" title="'+r.resourceURL+'" target="_blank">'+truncateURL(r.resourceURL)+'</a> <i class="icon-arrow-right"></i> <a href="'+r.resourceRedirectURL+'" title="'+r.resourceRedirectURL+'" target="_blank">'+truncateURL(r.resourceRedirectURL)+'</a></li>';
       });
-      
       return newHTML;
     }
   };
   
+  var truncateURL = function(url) {
+     var str = url;
+     if(str.length > 40) str = url.substr(0, 20)+'...'+url.substr(url.length-20, url.length);
+     return str
+  };
+
   var activeTabs = {};
   window.activeTabs = activeTabs;
   var enableTab = function(tabId) {
@@ -147,6 +153,7 @@
       getPopupHTML(updateTabId);
     } else if(changeInfo.status == 'complete') {
       renderBadgeCount(updateTabId);
+
       //Update popup's content to list active redirects,
       getPopupHTML(updateTabId);
     }

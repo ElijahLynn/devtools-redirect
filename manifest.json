@@ -1,6 +1,6 @@
 {
     "name": "Devtools redirect",
-    "version": "0.3",
+    "version": "0.4",
     "manifest_version": 2,
     "description": "Catch and redirect resources loaded from a specific domain / path.",
     "icons": {

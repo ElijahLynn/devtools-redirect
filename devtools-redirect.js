@@ -1,7 +1,7 @@
 
 (function() {
   
-  window.Boris = {
+  window.DevtoolsRedirect = {
     //Constants,
     
     //Vars,
@@ -37,7 +37,7 @@
   
   
   
-  Boris.init({
+  DevtoolsRedirect.init({
     storageOptions: [
       'root',
       'disabled'

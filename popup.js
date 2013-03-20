@@ -4,8 +4,7 @@
   
   var updateHTML = function(newHTML) {
     var list = $('#list-resources');
-    
-    list.html('');
+
     if(newHTML && newHTML != '') {
       list.html(newHTML);
     } else {

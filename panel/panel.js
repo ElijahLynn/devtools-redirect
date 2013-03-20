@@ -1,10 +1,10 @@
 
-(function(Arthur, Boris) {
+(function(Arthur, DevtoolsRedirect) {
   
   /*
     Rules Model,
   */
-  Boris.Rule = can.Model({
+  DevtoolsRedirect.Rule = can.Model({
     attributes : {
       resources : "App.Models.Resource.models",
       enabled: 'boolean'
@@ -16,7 +16,7 @@
     
   });
   
-  Boris.Resource = can.Model({
+  DevtoolsRedirect.Resource = can.Model({
     attributes: {
       enabled: 'boolean'
     }
@@ -26,14 +26,14 @@
     resourceRedirectURL: null
   });
   
-  Boris.Resource.List = can.Model.List({
+  DevtoolsRedirect.Resource.List = can.Model.List({
    
   });
   
   /*
     Panel constructor,
   */
-  Boris.Panel = can.Control({
+  DevtoolsRedirect.Panel = can.Control({
     
     defaults: {
       rules: null
@@ -51,7 +51,7 @@
       
       var optionsDef = null;
       if(!this.options.rules) {
-        optionsDef = Boris.getOptions('rules').then(function(opts) {
+        optionsDef = DevtoolsRedirect.getOptions('rules').then(function(opts) {
           _this.options.rules = opts['rules'];
         });
       }
@@ -68,10 +68,12 @@
       
       //Render the rules,
       $.when(optionsDef).then(function() {
-        _this.options.rules = Boris.Resource.models(_this.options.rules);
+        _this.options.rules = DevtoolsRedirect.Resource.models(_this.options.rules);
         
-        var rulesHTML = can.view('../views/rules.ejs', {rules: _this.options.rules});
-        _this.element.prepend(rulesHTML);
+        if(_this.options.rules && _this.options.rules.length) {
+          var rulesHTML = can.view('../views/rules.ejs', {rules: _this.options.rules});
+          _this.element.prepend(rulesHTML);
+        }
       });
       
     },
@@ -106,7 +108,7 @@
       
       var rules = this.retrieveRules();
       
-      Boris.setOption({'rules': rules}).then(function() {
+      DevtoolsRedirect.setOption({'rules': rules}).then(function() {
         el.removeAttr('disabled');
         
         //Once options are set, update options,
@@ -120,7 +122,7 @@
     addResource: function(list, resource) {
       list = list ? list : this.element.find('.list-resources').eq(0);
       
-      var newResourceList = Boris.Resource.models([
+      var newResourceList = DevtoolsRedirect.Resource.models([
         {resourceURL: resource ? resource.resourceURL : null, resourceRedirectURL: resource ? resource.resourceRedirectURL : null}
       ]);
       
@@ -129,7 +131,7 @@
     },
     
     addRulesSet: function() {
-      var newRules = Boris.Resource.models([new Boris.Rule()]);
+      var newRules = DevtoolsRedirect.Resource.models([new DevtoolsRedirect.Rule()]);
       var ruleHTML = can.view('../views/rules.ejs', {rules: newRules});
       this.formActions.before(ruleHTML);
     },
@@ -204,14 +206,8 @@
     
   });
   
-  window.Panel = new Boris.Panel('#form-rules', {});
+  window.Panel = new DevtoolsRedirect.Panel('#form-rules', {});
   
-  window.onbeforeunload = function(event) {
-    //port.postMessage({action: 'disableTab', tabId: tabID});
-    console.info('test');
-    return "Are you sure you want to navigate away?";
-  };
-  
-})(Arthur, Boris);
+})(Arthur, DevtoolsRedirect);
 
 

@@ -5,7 +5,6 @@
   
   // Saves options to localStorage.
   var save_options = function(event) {
-    console.log('save options');
     var checkbox = document.getElementById("opt-velocity-stacktrace");
     storage.set({'opt-velocity-stacktrace': checkbox.checked ? true : false}, function() {
       
