@@ -21,7 +21,7 @@
   }
 
   // Init the panel,
-  chrome.devtools.panels.create("Redirect", "img/icon-32x32.png", "panel/panel.html", function(panel) {
+  chrome.devtools.panels.create("Redirect", "icon_32.png", "panel/panel.html", function(panel) {
     var _window; // Going to hold the reference to panel.html's `window`
     var newResource = null;
     var currentTab = null;

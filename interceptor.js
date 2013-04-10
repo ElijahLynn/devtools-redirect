@@ -23,9 +23,9 @@
   };
   
   var setBrowserIcon = function(state, tabId) {
-    var imgSrc = 'img/browser-icon-inactive.png';
+    var imgSrc = 'images/browser-icon-inactive.png';
     if(state == 'active') {
-      imgSrc = 'img/browser-icon-active.png';
+      imgSrc = 'images/browser-icon-active.png';
     }
     
     chrome.browserAction.setIcon({
@@ -145,7 +145,7 @@
     if(!activeTabs[updateTabId]) return;
     
     if(changeInfo.status == 'loading') {
-      var imgSrc = 'img/browser-icon-inactive.png';
+      var imgSrc = 'images/browser-icon-inactive.png';
       chrome.browserAction.setIcon({path: imgSrc, tabId: updateTabId});
       resetBadgeCount(updateTabId);
       

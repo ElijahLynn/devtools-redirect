@@ -78,8 +78,6 @@
       // Communication,
       var ports = {};
       chrome.extension.onConnect.addListener(function(port) {
-          console.info('on connect');
-          console.info(port);
           if (port.name !== portName) return;
           ports[port.portId_] = port;
           
@@ -95,8 +93,6 @@
       
       // Function to send a message to all devtool.html views:
       var notifyPort = function(msg) {
-        console.info(msg);
-        console.info(Object.keys(ports));
         Object.keys(ports).forEach(function(portId_) {
           ports[portId_].postMessage(msg);
         });
@@ -109,13 +105,11 @@
     },
     
     bindMsgEvent: function(msg, func) {
-      console.info('bindMsgEvent()');
       this.msgEvents[msg] = func;
       return this.msgEvents[msg];
     },
     
     catchMsg: function(passedMsg) {
-      console.info('catchMsg()');
       var firedMsg = false;
       $.each(this.msgEvents, function(msg, key) {
         if(key === passedMsg) {
@@ -123,8 +117,6 @@
           firedMsg = true;
         }
       });
-      
-      if(!firedMsg) console.log(firedMsg);
       
     }
     

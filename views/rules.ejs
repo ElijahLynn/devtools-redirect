@@ -1,4 +1,4 @@
-<% console.info(rules); $.each( rules, function( i, rule ) { %>
+<% $.each( rules, function( i, rule ) { %>
   <fieldset>
     <legend>
       <input class="siteEnabled" type="checkbox" placeholder="Enabled" <% if(rule.attr('enabled')) { %> checked="checked"<% } %> />

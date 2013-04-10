@@ -1,26 +1,21 @@
 {
     "name": "Devtools redirect",
-    "version": "0.4",
+    "version": "0.0.0.8",
     "manifest_version": 2,
-    "description": "Catch and redirect resources loaded from a specific domain / path.",
+    "description": "Catch and redirect resources loaded from a specific domain to any file hosted on a local or remote server.",
     "icons": {
-      "128": "img/icon-32x32.png"
+      "32": "icon_32.png",
+      "128": "icon_128.png"
     },
-    
     
     "browser_action": {
       "default_popup": "popup.html",
-      "default_icon": "img/browser-icon-inactive.png"
+      "default_icon": "images/browser-icon-inactive.png"
     },
-    
     
     "background": {"page": "background.html"},
     
-    //"options_page": "options.html",
-    
     "devtools_page": "devtools.html",
-    
-    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
     
     "permissions": [
       "storage",
@@ -30,6 +25,5 @@
       "webRequestBlocking",
       "http://*/*",
       "https://*/*"
-    ]
-    
+    ]   
 }
