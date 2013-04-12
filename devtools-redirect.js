@@ -1,5 +1,5 @@
 
-(function() {
+(function(window) {
   
   window.DevtoolsRedirect = {
     //Constants,
@@ -44,4 +44,4 @@
     ]
   });
   
-})();
+})(window);

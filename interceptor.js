@@ -1,6 +1,8 @@
 
 (function() {
   
+  
+  
   var redirectRoot = "http://localhost/trsrc-MAINLINE/site/";
   var listeners = [];
   var resourcesRedirected = {};
