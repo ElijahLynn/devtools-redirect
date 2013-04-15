@@ -28,4 +28,33 @@ body {
   padding: 8px 0;
 }
 
+#form-rules fieldset ul li div.wrapper-resourceURL,
+#form-rules fieldset ul li div.wrapper-resourceRedirectURL {
+  margin-left:0;
+  float:none;
+  display:inline-block;
+  position:relative;
+}
+
+#form-rules fieldset ul li div.wrapper-resourceURL .icon,
+#form-rules fieldset ul li div.wrapper-resourceRedirectURL .icon {
+  display: block;
+  background-color: transparent;
+  width: 14px;
+  height: 14px;
+  position:absolute;
+  right: 10px;
+  top: 50%;
+  margin-top: -7px;
+}
+#form-rules fieldset ul li div.wrapper-resourceURL .icon-ok-sign,
+#form-rules fieldset ul li div.wrapper-resourceRedirectURL .icon-ok-sign {
+  cursor:pointer;
+}
+#form-rules fieldset ul li div.wrapper-resourceURL .icon-ok-sign:hover,
+#form-rules fieldset ul li div.wrapper-resourceRedirectURL .icon-ok-sign:hover {
+  opacity:0.6;
+}
+
+
   

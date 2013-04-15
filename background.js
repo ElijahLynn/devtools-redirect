@@ -1,8 +1,6 @@
 
 (function() {
   
-  
-  
   var redirectRoot = "http://localhost/trsrc-MAINLINE/site/";
   var listeners = [];
   var resourcesRedirected = {};
@@ -64,7 +62,7 @@
   //Communication,
   var ports = {};
   chrome.extension.onConnect.addListener(function(port) {
-      if(port.name != 'devtools' && port.name != 'popup') return;
+      if(port.name != 'devtools' && port.name != 'popup' && port.name != 'panel') return;
       var tabId = port.sender && port.sender.tab.id ? port.sender.tab.id : null;
       ports[port.portId_] = {port: port, portId: port.portId_, tabId: tabId, name: port.name};
       
@@ -91,6 +89,9 @@
               case 'getPopupHTML':
                 getPopupHTML(msg.tabId);
               break;
+              case 'validateUrl':
+                validateUrl(msg.id, msg.url);
+              break;
             }
           }
       });
@@ -110,6 +111,13 @@
     });
   };
   
+  // Function to send a message to all panel.html views:
+  function notifyPanel(msg) {
+    Object.keys(ports).forEach(function(portId_) {
+      if(ports[portId_].name == 'panel') ports[portId_].port.postMessage(msg);
+    });
+  };
+
   var getPopupHTML = function(tabId) {
     var popupHTML = generatePopupHTML(tabId);
     notifyPopups({action: 'updateHTML', tabId: tabId, html: popupHTML})
@@ -141,6 +149,17 @@
     delete activeTabs[tabId];
   };
   
+  var validateUrl = function(id, url) {
+    //Make an ajax call and make sure it returns a 200 status,
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState == 4) {
+        notifyPanel({action: 'validatedUrl', id: id, url: url, status: xhr.status, content: xhr.status == 200 ? xhr.responseText : null});
+      }
+    }; // Implemented elsewhere.
+    xhr.open("GET", url, true);
+    xhr.send();
+  };
   
   //Reset the icon on loading,
   chrome.tabs.onUpdated.addListener(function(updateTabId, changeInfo, tab) {
