@@ -5,9 +5,9 @@ Catch and redirect resources loaded from a specific domain to any file hosted on
 
 Installation
 ---------------------
-You can either go to the chrome webstore http://chrome.google.com/webstore and install it from there
+You can either install it from the Chrome Webstore https://chrome.google.com/webstore/detail/devtools-redirect/jmhdebkkippcccflcoddckhjjfgnfhnp
 **or**
-fork it from github http://github.com/kbouchard/devtools-redirect and load it unpacked.
+fork it from Github http://github.com/kbouchard/devtools-redirect and load it unpacked.
 
 Demo
 ---------------------
